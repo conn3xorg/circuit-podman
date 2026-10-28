@@ -75,12 +75,22 @@ variable "secrets" {
   ephemeral   = true
   sensitive   = true
   description = "Secret environment variables by container name, such as { app = { DB_PASSWORD = \"...\" } }. They go to /etc/containers/env/NAME.env with mode 0600 and never reach state or the plan."
+
+  validation {
+    condition     = alltrue([for name in keys(var.secrets) : contains(keys(var.containers), name)])
+    error_message = "Each key of secrets must be the name of a container in containers."
+  }
+
+  validation {
+    condition     = alltrue(flatten([for env in values(var.secrets) : [for k in keys(env) : can(regex("^[A-Za-z_][A-Za-z0-9_]*$", k))]]))
+    error_message = "Secret variable names may use letters, digits and _, and can't start with a digit."
+  }
 }
 
 variable "registries" {
   type        = list(string)
   default     = []
-  description = "Registries to search for short image names, in order, such as [\"docker.io\", \"quay.io\"]. When empty, the distribution's own setting stays."
+  description = "Registries to search for short image names, such as [\"docker.io\"]. Give one: with two or more, Podman refuses short names when it has no terminal to ask on, as under systemd. When empty, the distribution's own setting stays."
 
   validation {
     condition     = alltrue([for r in var.registries : can(regex("^[a-z0-9.-]+(:[0-9]+)?$", r))])

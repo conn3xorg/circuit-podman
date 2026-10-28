@@ -59,8 +59,9 @@ circuit "podman" {
   step "registries" {
     for_each = toset(length(var.registries) > 0 ? ["search"] : [])
     file {
-      path    = "/etc/containers/registries.conf.d/50-conn3x.conf"
-      content = "# Managed by Conn3x.\nunqualified-search-registries = ${jsonencode(var.registries)}\n"
+      path      = "/etc/containers/registries.conf.d/50-conn3x.conf"
+      content   = "# Managed by Conn3x.\nunqualified-search-registries = ${jsonencode(var.registries)}\n"
+      on_remove = "delete"
     }
   }
 
