@@ -84,9 +84,24 @@ jobs:
             exit 1
           fi
       - name: Check the container answers on its published port
-        run: |
+        run: &use |
           sudo podman exec circuit-podman systemctl is-active whoami.service podman-auto-update.timer
           sudo podman exec circuit-podman bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080; printf "GET / HTTP/1.0\r\n\r\n" >&3; cat <&3' | tee /dev/stderr | grep -q '^Name: from-the-env-file'
+      # Restarting the container boots systemd again, so this checks Quadlet
+      # starts the container by itself, with its secret, and the plan has
+      # nothing to do.
+      - name: Restart the host, then check the container comes back and the plan
+        working-directory: examples/local
+        run: |
+          sudo podman restart circuit-podman
+          sudo podman exec circuit-podman timeout 60 systemctl is-system-running --wait || true
+          for _ in $(seq 60); do
+            sudo podman exec circuit-podman systemctl is-active -q whoami.service && break
+            sleep 2
+          done
+          conn3x plan -detailed-exitcode
+      - name: Check the container answers on its published port after the restart
+        run: *use
       - name: Clean up
         if: always()
         working-directory: examples/local
