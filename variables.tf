@@ -54,7 +54,7 @@ variable "containers" {
     # The last path segment must carry a tag or a digest, so the image can't
     # move under you as :latest.
     condition     = alltrue([for c in values(var.containers) : can(regex("^[^\\s]+$", c.image)) && can(regex("[:@]", reverse(split("/", c.image))[0]))])
-    error_message = "Each image needs a tag or a digest, such as \"docker.io/library/nginx:1.29-alpine\" or \"quay.io/app/api@sha256:...\"."
+    error_message = "Each image needs a tag or a digest, such as \"docker.io/library/nginx:1.30-alpine\" or \"quay.io/app/api@sha256:...\"."
   }
 
   validation {
