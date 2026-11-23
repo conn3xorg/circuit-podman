@@ -85,10 +85,17 @@ circuit "podman" {
 
   # Quadlet generates NAME.service on daemon-reload. A changed unit or env
   # file restarts only that container; the first apply starts it.
+  step "daemon_reload" {
+    service_action {
+      action   = "daemon-reload"
+      triggers = { for k in keys(var.containers) : k => "${conn3x_file.podman__unit["${each.key}/${k}"].revision}/${conn3x_file.podman__env["${each.key}/${k}"].revision}" }
+    }
+  }
+
   step "restart" {
     for_each = var.containers
-    command {
-      command = "systemctl daemon-reload && systemctl restart '${item.key}.service'"
+    service_action {
+      name = "${item.key}.service"
       triggers = {
         unit = conn3x_file.podman__unit["${each.key}/${item.key}"].revision
         env  = conn3x_file.podman__env["${each.key}/${item.key}"].revision

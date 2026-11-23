@@ -120,7 +120,7 @@ systemctl daemon-reload
 
 ## Requirements
 
-Requires Conn3x v0.6.5 or later and systemd on each host, with outbound HTTPS to your distribution's mirrors and to the registries your images come from. Quadlet ships with Podman 4.4 and later; the oldest Podman this was tested with is 4.9.3 on Ubuntu 24.04.
+Requires Conn3x v0.29.0 or later and systemd on each host, with outbound HTTPS to your distribution's mirrors and to the registries your images come from. Quadlet ships with Podman 4.4 and later; the oldest Podman this was tested with is 4.9.3 on Ubuntu 24.04.
 
 ## Tested on
 
