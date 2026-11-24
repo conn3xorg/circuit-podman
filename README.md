@@ -6,6 +6,8 @@ A Conn3x circuit that installs Podman from your distribution's own repositories 
 
 You describe each container in your configuration, with an image pinned to a tag or digest. A change shows up in `conn3x plan` as a diff of its unit file, and the apply restarts only the container that changed. Secrets go in a separate ephemeral input, which Conn3x writes to the host without putting it in state or the plan.
 
+**New to Conn3x?** [Conn3x](https://conn3x.org) is an IaCC tool: infrastructure as code and configuration management in one binary, one plan and one state. You describe your servers and what runs on them in HCL, `conn3x plan` previews every change, and `conn3x apply` applies it. A circuit is a reusable Conn3x module for one concern; this circuit's concern is Podman.
+
 ## Usage
 
 ```hcl
