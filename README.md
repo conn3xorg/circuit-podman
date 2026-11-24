@@ -15,7 +15,7 @@ variable "grafana_password" {
 }
 
 module "podman" {
-  source = "github.com/conn3xorg/circuit-podman?ref=v0.2.0"
+  source = "github.com/conn3xorg/circuit-podman?ref=v0.2.1"
 
   hosts                = { apps = "192.168.1.30" }
   ssh_private_key_file = "~/.ssh/id_ed25519"
