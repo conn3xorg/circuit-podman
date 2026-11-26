@@ -67,6 +67,20 @@ variable "containers" {
     condition     = alltrue(flatten([for c in values(var.containers) : [for k in keys(c.environment) : can(regex("^[A-Za-z_][A-Za-z0-9_]*$", k))]]))
     error_message = "Environment variable names may use letters, digits and _, and can't start with a digit."
   }
+
+  validation {
+    # PublishPort and Volume lines are interpolated raw: a line break here
+    # would inject extra lines into a unit that runs as root.
+    condition     = alltrue(flatten([for c in values(var.containers) : [for s in concat(c.ports, c.volumes) : can(regex("^[^\r\n]*$", s))]]))
+    error_message = "Ports and volumes can't contain line breaks, since each one becomes a line of the Quadlet unit."
+  }
+
+  validation {
+    # Environment values land in the unit through jsonencode, so a newline
+    # would come out as a literal \n instead of failing loudly.
+    condition     = alltrue(flatten([for c in values(var.containers) : [for v in values(c.environment) : can(regex("^[^\r\n]*$", v))]]))
+    error_message = "Environment values can't contain line breaks. For a multiline value, mount a file as a volume instead."
+  }
 }
 
 variable "secrets" {
