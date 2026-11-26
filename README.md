@@ -29,7 +29,7 @@ module "podman" {
       auto_update = true
     }
     grafana = {
-      image       = "docker.io/grafana/grafana:13.3.0"
+      image       = "docker.io/grafana/grafana:13.3.2"
       ports       = ["3000:3000"]
       volumes     = ["grafana:/var/lib/grafana"]
       environment = { GF_USERS_ALLOW_SIGN_UP = "false" }
